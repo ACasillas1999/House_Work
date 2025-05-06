@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-size: 26px;
         }
         .login-container img {
-            width: 80px;
+            width: 75%;
             margin-bottom: 15px;
         }
         .login-container input[type="email"],
@@ -75,9 +75,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 padding: 30px 20px;
             }
         }
+        #particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: #ecf0f1;
+}
+
     </style>
 </head>
 <body>
+<div id="particles-js"></div>
+
     <div class="login-container">
         <img src="assets/logo-clinica.png" alt="Logo Clínica">
         <h1>Acceso al Sistema</h1>
@@ -89,3 +101,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </body>
 </html>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+  particlesJS("particles-js", {
+    particles: {
+      number: { value: 80 },
+      color: { value: "#1f3a93" },
+      shape: { type: "circle" },
+      opacity: { value: 0.4 },
+      size: { value: 3 },
+      line_linked: {
+        enable: true,
+        distance: 150,
+        color: "#1f3a93",
+        opacity: 0.2,
+        width: 1
+      },
+      move: { enable: true, speed: 2 }
+    },
+    interactivity: {
+      detect_on: "canvas",
+      events: {
+        onhover: { enable: true, mode: "grab" },
+        onclick: { enable: true, mode: "push" }
+      }
+    },
+    retina_detect: true
+  });
+</script>

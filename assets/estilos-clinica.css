@@ -1,0 +1,174 @@
+/* Paleta:
+- Azul Principal: #1f3a93
+- Hover / Contraste: #34495e
+- Fondo Claro: #ecf0f1
+- Texto Oscuro: #2c3e50
+- Borde Suave: #ccc
+*/
+
+/* RESET GENERAL */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    line-height: 1.6;
+}
+
+/* ENCABEZADOS */
+h1, h2, h3, h4 {
+    color: #1f3a93;
+    font-weight: 600;
+}
+
+h1 {
+    font-size: 28px;
+}
+
+h2 {
+    font-size: 24px;
+}
+
+h3 {
+    font-size: 20px;
+}
+
+/* BOTONES */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #1f3a93;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 15px;
+    transition: background 0.3s;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #34495e;
+}
+
+.btn-secundario {
+    background-color: #ffffff;
+    color: #1f3a93;
+    border: 1px solid #1f3a93;
+}
+
+.btn-secundario:hover {
+    background-color: #1f3a93;
+    color: white;
+}
+
+/* FORMULARIOS */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+/* CONTENEDORES / TARJETAS */
+.card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+/* TABLAS */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.table thead {
+    background-color: #1f3a93;
+    color: white;
+}
+
+.table th, .table td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: left;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* SIDEBAR */
+.sidebar {
+    background-color: #1f3a93;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+    width: 240px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 10px 15px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.2s;
+}
+
+.sidebar a:hover {
+    background-color: #34495e;
+}
+
+/* NAVBAR */
+.navbar {
+    background-color: #1f3a93;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* LOGO */
+.logo {
+    width: 60px;
+    height: auto;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 15px;
+    }
+
+    .table th, .table td {
+        font-size: 14px;
+    }
+}

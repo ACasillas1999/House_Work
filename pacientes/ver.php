@@ -46,7 +46,7 @@ $citas = $stmt->get_result();
     <meta charset="UTF-8">
     <title>Perfil del Paciente</title>
     <link rel="stylesheet" href="../assets/estilos.css">
-    <link rel="stylesheet" href="../assets/estilos.css">
+   
 </head>
 <body>
     <h1>Perfil de <?= htmlspecialchars($paciente['nombre']) ?></h1>
