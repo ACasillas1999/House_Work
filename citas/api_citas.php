@@ -23,6 +23,7 @@ while ($row = $result->fetch_assoc()) {
         'title' => $row['paciente'] . ' con ' . $row['doctor'],
         'start' => $row['fecha'] . 'T' . $row['hora'],
         'descripcion' => $row['motivo'] . ' (' . $row['estado'] . ')',
+        'paciente' => $row['paciente'], // 👈 clave para mostrar en el modal
     ];
 }
 

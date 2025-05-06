@@ -1,5 +1,4 @@
 <?php
-// pacientes/editar.php
 require_once '../includes/db.php';
 session_start();
 
@@ -14,7 +13,6 @@ if (!$id) {
     exit;
 }
 
-// Obtener datos actuales
 $stmt = $conn->prepare("SELECT * FROM pacientes WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
@@ -26,7 +24,6 @@ if (!$paciente) {
     exit;
 }
 
-// Actualizar datos si se envió el formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = $_POST['nombre'];
     $fecha_nacimiento = $_POST['fecha_nacimiento'];
@@ -46,16 +43,104 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: listado.php");
     exit;
 }
+
+$titulo = 'Editar Paciente';
+//include '../includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Editar Paciente</title>
-    <link rel="stylesheet" href="../assets/estilos.css">
-</head>
-<body>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #ecf0f1;
+        margin: 0;
+        padding: 40px;
+    }
+
+    .main-panel {
+        max-width: 800px;
+        margin: auto;
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+        color: #1f3a93;
+        font-size: 26px;
+        margin-bottom: 30px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label {
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="email"],
+    select,
+    textarea {
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 15px;
+        background-color: #fdfdfd;
+        box-sizing: border-box;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 70px;
+    }
+
+    button[type="submit"] {
+        background-color: #1f3a93;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #005fc4;
+    }
+
+    .btn-volver {
+        display: inline-block;
+        margin-top: 20px;
+        color: #1f3a93;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .btn-volver:hover {
+        color: #005fc4;
+    }
+
+    @media (max-width: 600px) {
+        .main-panel {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="main-panel">
     <h1>Editar Paciente</h1>
     <form method="POST">
         <label>Nombre completo:</label>
@@ -92,8 +177,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label>Antecedentes familiares:</label>
         <textarea name="antecedentes"><?= htmlspecialchars($paciente['antecedentes']) ?></textarea>
 
-        <button type="submit">Actualizar</button>
+        <button type="submit"><i class="fa fa-save"></i> Actualizar</button>
     </form>
-    <a href="listado.php">Volver al listado</a>
-</body>
-</html>
+    <a class="btn-volver" href="listado.php"><i class="fa fa-arrow-left"></i> Volver al listado</a>
+</div>
+
+<!--<?php include '../includes/footer.php'; ?>-->
