@@ -58,7 +58,7 @@ include 'includes/header.php';
 }
 
 .sidebar a:hover {
-    background-color: #34495e;
+    background-color:rgb(0, 106, 212);
     transform: translateX(2px);
 }
 
@@ -75,8 +75,13 @@ include 'includes/header.php';
 }
 
 .sidebar .logout:hover {
-    text-decoration: underline;
+   /* text-decoration: underline;*/
     color: #ffffff;
+}
+
+ .logout a:hover {
+   background-color: rgb(212, 0, 0);
+   transform: translateX(2px);
 }
 
 /* Alineación general del layout */
