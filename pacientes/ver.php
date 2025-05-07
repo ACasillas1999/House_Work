@@ -33,12 +33,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_foto']) && is
         $stmt = $conn->prepare("UPDATE pacientes SET foto = ? WHERE id = ?");
         $stmt->bind_param("si", $nuevo_nombre, $id);
         $stmt->execute();
-        header("Location: perfil.php?id=" . $id); // recargar para ver cambios
+        header("Location: ver.php?id=" . $id); // recargar para ver la foto nueva
         exit;
     } else {
         echo "<script>alert('Error al subir la foto');</script>";
     }
 }
+
+// Subida de archivos de laboratorio
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['subir_lab']) && isset($_FILES['lab_file'])) {
+    $lab_name = $_FILES['lab_file']['name'];
+    $lab_tmp = $_FILES['lab_file']['tmp_name'];
+    $lab_dest = "../uploads/laboratorio/lab_{$id}_" . basename($lab_name);
+
+    if (!is_dir("../uploads/laboratorio")) mkdir("../uploads/laboratorio", 0777, true);
+    move_uploaded_file($lab_tmp, $lab_dest);
+}
+
+// Subida de archivos de rayos x
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['subir_rx']) && isset($_FILES['rx_file'])) {
+    $rx_name = $_FILES['rx_file']['name'];
+    $rx_tmp = $_FILES['rx_file']['tmp_name'];
+    $rx_dest = "../uploads/rayosx/rx_{$id}_" . basename($rx_name);
+
+    if (!is_dir("../uploads/rayosx")) mkdir("../uploads/rayosx", 0777, true);
+    move_uploaded_file($rx_tmp, $rx_dest);
+}
+
+
 
 
 if (!$paciente) {
@@ -297,16 +319,12 @@ li {
                 <h2>CLÍNICA</h2>
             </div>
             <div class="nav-links">
-    <a href="pacientes/listado.php"><i class="fa fa-users"></i>Pacientes</a>
-    <a href="citas/listado.php"><i class="fa fa-calendar-check"></i>Citas</a>
-    <a href="citas/calendario.php"><i class="fa fa-calendar-days"></i>Calendario</a>
-    <a href="historial/listado.php"><i class="fa fa-file-medical-alt"></i>Historial</a>
-    <?php if ($_SESSION['rol'] === 'admin'): ?>
-        <a href="usuarios/registro.php"><i class="fa fa-user-plus"></i>Registrar Usuario</a>
-    <?php endif; ?>
-    <?php if ($_SESSION['rol'] === 'doctor'): ?>
-        <a href="panel_doctor.php"><i class="fa fa-stethoscope"></i>Mi Panel Médico</a>
-    <?php endif; ?>
+    <!--<a href="pacientes/listado.php"><i class="fa fa-users"></i>Pacientes</a>
+    <a href="citas/listado.php"><i class="fa fa-calendar-check"></i>Citas</a>-->
+    <a href="../citas/calendario.php"><i class="fa fa-calendar-days"></i>Calendario</a>
+   <!-- <a href="historial/listado.php"><i class="fa fa-file-medical-alt"></i>Historial</a>-->
+    
+   
     
     <!-- NUEVO BOTÓN PARA VOLVER AL LISTADO -->
     <a href="listado.php"><i class="fa fa-arrow-left"></i>Volver al listado</a>
@@ -331,15 +349,18 @@ li {
                 <p><strong>Tipo de sangre:</strong> <?= htmlspecialchars($paciente['tipo_sangre']) ?></p>
             </div>
             <div class="perfil-foto">
-            <form method="POST" enctype="multipart/form-data">
-    <?php if (!empty($paciente['foto'])): ?>
-        <img src="../uploads/fotos/<?= $paciente['foto'] ?>" alt="Foto del paciente" style="width: 100%; border-radius: 6px; margin-bottom: 8px;">
-    <?php else: ?>
-        <p style="text-align:center;">Sin foto</p>
-    <?php endif; ?>
-
-    <input type="file" name="foto" accept="image/*" style="font-size: 12px; margin-top: 5px;">
-    <button type="submit" name="guardar_foto" style="margin-top: 5px; padding: 4px 8px; font-size: 12px;">Actualizar</button>
+            <form method="POST" enctype="multipart/form-data" id="formFoto">
+    <label for="fotoInput" style="cursor: pointer; display: block;">
+        <?php if (!empty($paciente['foto'])): ?>
+            <img src="../uploads/fotos/<?= $paciente['foto'] ?>" alt="Foto del paciente" style="width: 100%; border-radius: 6px;">
+        <?php else: ?>
+            <div style="width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; color: #34495e; font-weight: bold; background-color: #f8f9fa;">
+                Sin foto
+            </div>
+        <?php endif; ?>
+    </label>
+    <input type="file" name="foto" id="fotoInput" accept="image/*" style="display: none;" onchange="document.getElementById('formFoto').submit();">
+    <input type="hidden" name="guardar_foto" value="1">
 </form>
 
             </div>
@@ -360,21 +381,94 @@ li {
             </div>
 
             <div class="perfil-panel">
-                <h2><i class="fas fa-file-medical-alt"></i> Generadores de documentos</h2>
-                <ul>
-                    <?php while ($h = $historiales->fetch_assoc()): ?>
-                        <li>
-                            <strong><?= $h['fecha'] ?></strong>: <?= htmlspecialchars($h['descripcion']) ?>
-                            <?php if ($h['archivo']): ?>
-                                <br>📄 <a href="../uploads/<?= $h['archivo'] ?>" target="_blank">Ver archivo</a>
-                            <?php endif; ?>
-                            <?php if ($h['receta']): ?>
-                                <br>📝 <a href="../historial/receta_pdf.php?id=<?= $h['id'] ?>" target="_blank">Generar receta</a>
-                            <?php endif; ?>
-                        </li>
-                    <?php endwhile; ?>
-                </ul>
-            </div>
+    <h2><i class="fas fa-file-medical-alt"></i> Generadores de documentos</h2>
+
+    <!-- Generador 1: Recetas -->
+    <h3>Recetas Médicas</h3>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file_receta" required>
+        <input type="hidden" name="subir_receta" value="1">
+        <button type="submit">Subir</button>
+    </form>
+    <table>
+        <thead>
+            <tr><th>Archivo</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+            <?php
+            $recetas = glob("../uploads/generadores/recetas_{$id}_*");
+            foreach ($recetas as $file):
+            ?>
+                <tr>
+                    <td><?= basename($file) ?></td>
+                    <td><a href="<?= $file ?>" target="_blank">Ver</a></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <!-- Generador 2: Certificados -->
+    <h3>Certificados Médicos</h3>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file_certificado" required>
+        <input type="hidden" name="subir_certificado" value="1">
+        <button type="submit">Subir</button>
+    </form>
+    <table>
+        <thead>
+            <tr><th>Archivo</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+            <?php
+            $certificados = glob("../uploads/generadores/certificados_{$id}_*");
+            foreach ($certificados as $file):
+            ?>
+                <tr>
+                    <td><?= basename($file) ?></td>
+                    <td><a href="<?= $file ?>" target="_blank">Ver</a></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <!-- Puedes replicar esto para los otros generadores -->
+</div>
+
+
+            <div class="perfil-panel">
+    <h2><i class="fas fa-vials"></i> Documentos de Laboratorio</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="lab_file" required>
+        <input type="hidden" name="subir_lab" value="1">
+        <button type="submit" style="margin-top: 10px;">Subir</button>
+    </form>
+    <ul>
+        <?php
+        $lab_files = glob("../uploads/laboratorio/lab_{$id}_*");
+        foreach ($lab_files as $file):
+        ?>
+            <li><a href="<?= $file ?>" target="_blank"><?= basename($file) ?></a></li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+
+<div class="perfil-panel">
+    <h2><i class="fas fa-x-ray"></i> Documentos de Rayos X</h2>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="rx_file" required>
+        <input type="hidden" name="subir_rx" value="1">
+        <button type="submit" style="margin-top: 10px;">Subir</button>
+    </form>
+    <ul>
+        <?php
+        $rx_files = glob("../uploads/rayosx/rx_{$id}_*");
+        foreach ($rx_files as $file):
+        ?>
+            <li><a href="<?= $file ?>" target="_blank"><?= basename($file) ?></a></li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+
         </div>
     </div>
 </div>

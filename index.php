@@ -206,8 +206,8 @@ include 'includes/header.php';
             <a href="usuarios/logout.php"><i class="fa fa-sign-out-alt"></i> Cerrar sesión</a>
         </div>
     </div>
-
-    <!-- PANEL PRINCIPAL -->
+<!--
+    PANEL PRINCIPAL 
     <div class="main-panel">
         <div class="top-bar">
             <h1>Bienvenido, <?= htmlspecialchars($_SESSION['nombre']) ?> 👋</h1>
@@ -227,6 +227,6 @@ include 'includes/header.php';
             <?php endif; ?>
         </div>
     </div>
-</div>
+</div>-->
 
-<?php include 'includes/footer.php'; ?>
+<!--<?php include 'includes/footer.php'; ?>-->
