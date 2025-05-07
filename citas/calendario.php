@@ -141,39 +141,39 @@ if (!isset($_SESSION['id'])) {
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new Calendar(calendarEl, {
-            locale: 'es',
-            initialView: 'dayGridMonth',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            events: 'api_citas.php',
-            eventClick: function(info) {
-                document.getElementById('modalTitle').innerText = info.event.title;
-                document.getElementById('modalPaciente').innerText = info.event.extendedProps.paciente || '—';
-                document.getElementById('modalDescripcion').innerText = info.event.extendedProps.descripcion || '—';
-                document.getElementById('modalFecha').innerText = info.event.startStr.split("T")[0];
-                document.getElementById('modalHora').innerText = info.event.startStr.split("T")[1]?.substring(0,5) || '—';
-                document.getElementById('infoModal').style.display = 'block';
-            }
-        });
-        calendar.render();
-
-        // Cerrar modal
-        document.getElementById('cerrarModal').onclick = function() {
-            document.getElementById('infoModal').style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            if (event.target === document.getElementById('infoModal')) {
-                document.getElementById('infoModal').style.display = 'none';
-            }
+   document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        locale: 'es',
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: 'api_citas.php',
+        eventClick: function(info) {
+            document.getElementById('modalTitle').innerText = info.event.title;
+            document.getElementById('modalPaciente').innerText = info.event.extendedProps.paciente || '—';
+            document.getElementById('modalDescripcion').innerText = info.event.extendedProps.descripcion || '—';
+            document.getElementById('modalFecha').innerText = info.event.startStr.split("T")[0];
+            document.getElementById('modalHora').innerText = info.event.startStr.split("T")[1]?.substring(0,5) || '—';
+            document.getElementById('infoModal').style.display = 'block';
         }
     });
+    calendar.render();
+
+    document.getElementById('cerrarModal').onclick = function() {
+        document.getElementById('infoModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target === document.getElementById('infoModal')) {
+            document.getElementById('infoModal').style.display = 'none';
+        }
+    }
+});
+
 </script>
 
 </body>
