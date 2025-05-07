@@ -18,6 +18,29 @@ $stmt->bind_param("i", $id);
 $stmt->execute();
 $paciente = $stmt->get_result()->fetch_assoc();
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_foto']) && isset($_FILES['foto'])) {
+    $foto_nombre = $_FILES['foto']['name'];
+    $foto_tmp = $_FILES['foto']['tmp_name'];
+    $foto_extension = pathinfo($foto_nombre, PATHINFO_EXTENSION);
+    $nuevo_nombre = "foto_{$id}." . strtolower($foto_extension);
+    $ruta_destino = "../uploads/fotos/" . $nuevo_nombre;
+
+    if (!is_dir("../uploads/fotos")) {
+        mkdir("../uploads/fotos", 0777, true);
+    }
+
+    if (move_uploaded_file($foto_tmp, $ruta_destino)) {
+        $stmt = $conn->prepare("UPDATE pacientes SET foto = ? WHERE id = ?");
+        $stmt->bind_param("si", $nuevo_nombre, $id);
+        $stmt->execute();
+        header("Location: perfil.php?id=" . $id); // recargar para ver cambios
+        exit;
+    } else {
+        echo "<script>alert('Error al subir la foto');</script>";
+    }
+}
+
+
 if (!$paciente) {
     echo "Paciente no encontrado.";
     exit;
@@ -141,9 +164,11 @@ body {
 }
 
 .perfil-content {
-    flex: 1;
+    margin-left: 240px; /* <-- esto evita que se encime */
     padding: 40px;
+    flex: 1;
 }
+
 
 .perfil-top {
     display: flex;
@@ -217,6 +242,40 @@ li {
     font-size: 14px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
 }
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: -260px; /* Oculta la barra fuera de vista */
+        transition: left 0.3s ease;
+        z-index: 1000;
+    }
+
+    .sidebar.active {
+        left: 0; /* Muestra la barra si tiene la clase "active" */
+    }
+
+    .perfil-content {
+        margin-left: 0 !important; /* El contenido usa todo el ancho */
+        padding: 20px;
+    }
+
+    .sidebar-toggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background-color: #1f3a93;
+        color: white;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 6px;
+        font-size: 18px;
+        cursor: pointer;
+        z-index: 1100;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+}
+
 </style>
 
 <div class="perfil-container">
@@ -227,23 +286,32 @@ li {
         <div class="perfil-btn"><i class="fa fa-user"></i> <?= htmlspecialchars($_SESSION['nombre']) ?></div>
         <div class="perfil-btn"><a href="../index.php">Volver al inicio</a></div>
     </div>-->
+
+    <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('active')">
+    <i class="fas fa-bars"></i>
+</button>
+
 <div class="sidebar">
         <div>
             <div class="sidebar-header">
                 <h2>CLÍNICA</h2>
             </div>
             <div class="nav-links">
-                <a href="pacientes/listado.php"><i class="fa fa-users"></i>Pacientes</a>
-                <a href="citas/listado.php"><i class="fa fa-calendar-check"></i>Citas</a>
-                <a href="citas/calendario.php"><i class="fa fa-calendar-days"></i>Calendario</a>
-                <a href="historial/listado.php"><i class="fa fa-file-medical-alt"></i>Historial</a>
-                <?php if ($_SESSION['rol'] === 'admin'): ?>
-                    <a href="usuarios/registro.php"><i class="fa fa-user-plus"></i>Registrar Usuario</a>
-                <?php endif; ?>
-                <?php if ($_SESSION['rol'] === 'doctor'): ?>
-                    <a href="panel_doctor.php"><i class="fa fa-stethoscope"></i>Mi Panel Médico</a>
-                <?php endif; ?>
-            </div>
+    <a href="pacientes/listado.php"><i class="fa fa-users"></i>Pacientes</a>
+    <a href="citas/listado.php"><i class="fa fa-calendar-check"></i>Citas</a>
+    <a href="citas/calendario.php"><i class="fa fa-calendar-days"></i>Calendario</a>
+    <a href="historial/listado.php"><i class="fa fa-file-medical-alt"></i>Historial</a>
+    <?php if ($_SESSION['rol'] === 'admin'): ?>
+        <a href="usuarios/registro.php"><i class="fa fa-user-plus"></i>Registrar Usuario</a>
+    <?php endif; ?>
+    <?php if ($_SESSION['rol'] === 'doctor'): ?>
+        <a href="panel_doctor.php"><i class="fa fa-stethoscope"></i>Mi Panel Médico</a>
+    <?php endif; ?>
+    
+    <!-- NUEVO BOTÓN PARA VOLVER AL LISTADO -->
+    <a href="listado.php"><i class="fa fa-arrow-left"></i>Volver al listado</a>
+</div>
+
         </div>
         <div class="logout">
             <a href="usuarios/logout.php"><i class="fa fa-sign-out-alt"></i> Cerrar sesión</a>
@@ -263,7 +331,17 @@ li {
                 <p><strong>Tipo de sangre:</strong> <?= htmlspecialchars($paciente['tipo_sangre']) ?></p>
             </div>
             <div class="perfil-foto">
-                <div class="perfil-foto-box">Foto</div>
+            <form method="POST" enctype="multipart/form-data">
+    <?php if (!empty($paciente['foto'])): ?>
+        <img src="../uploads/fotos/<?= $paciente['foto'] ?>" alt="Foto del paciente" style="width: 100%; border-radius: 6px; margin-bottom: 8px;">
+    <?php else: ?>
+        <p style="text-align:center;">Sin foto</p>
+    <?php endif; ?>
+
+    <input type="file" name="foto" accept="image/*" style="font-size: 12px; margin-top: 5px;">
+    <button type="submit" name="guardar_foto" style="margin-top: 5px; padding: 4px 8px; font-size: 12px;">Actualizar</button>
+</form>
+
             </div>
         </div>
 
